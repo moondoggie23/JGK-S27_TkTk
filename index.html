@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="mobile-web-app-capable" content="yes">
 <title>TikTok mockup prop</title>
 <style>
   :root{
@@ -29,19 +32,10 @@
     overflow:hidden;
   }
   .notch{ display:none; } /* real device already has its own notch/cutout */
-  .statusbar{
-    position:absolute; top:0; left:0; right:0; height:44px;
-    padding-top:env(safe-area-inset-top, 0px);
-    display:flex; align-items:flex-end; justify-content:space-between;
-    padding-left:calc(28px + env(safe-area-inset-left, 0px));
-    padding-right:calc(28px + env(safe-area-inset-right, 0px));
-    padding-bottom:6px;
-    z-index:800;
-    color:#fff;
-    font-size:15px; font-weight:600;
-    pointer-events:none;
-  }
-  .statusbar .right-icons{display:flex; align-items:center; gap:5px;}
+  /* No fake status bar: the real device's own status bar (with its real
+     clock) shows through, overlaid via apple-mobile-web-app-status-bar-style
+     when added to the home screen. Content below accounts for it with
+     safe-area-inset-top instead of reserving a drawn bar. */
 
   /* unobtrusive tap target: top-right corner, double-tap to enter/exit real fullscreen */
   #fullscreen-trigger{
@@ -112,8 +106,8 @@
   /* top tabs (fixed, TikTok-style フォロー中/おすすめ) */
   .top-overlay{
     position:absolute; top:0; left:0; right:0;
-    padding-top:50px;
-    height:96px;
+    padding-top:calc(env(safe-area-inset-top, 44px) + 6px);
+    height:calc(env(safe-area-inset-top, 44px) + 46px);
     display:flex; align-items:center; justify-content:center;
     gap:22px;
     background:linear-gradient(to bottom, rgba(0,0,0,.4), transparent);
@@ -132,7 +126,8 @@
     width:22px; height:2.5px; background:#fff; border-radius:2px;
   }
   .search-icon{
-    position:absolute; right:16px; top:60px;
+    position:absolute; right:16px;
+    top:calc(env(safe-area-inset-top, 44px) + 16px);
   }
   .search-icon svg{ width:20px; height:20px; fill:none; stroke:#fff; stroke-width:2; }
 
@@ -152,7 +147,8 @@
 
   /* right icon stack */
   .right-stack{
-    position:absolute; right:8px; bottom:118px;
+    position:absolute; right:8px;
+    bottom:calc(118px + env(safe-area-inset-bottom, 0px));
     display:flex; flex-direction:column; align-items:center; gap:19px;
     z-index:250;
   }
@@ -185,7 +181,8 @@
 
   /* bottom-left caption block */
   .bottom-info{
-    position:absolute; left:14px; right:76px; bottom:96px;
+    position:absolute; left:14px; right:76px;
+    bottom:calc(96px + env(safe-area-inset-bottom, 0px));
     z-index:250;
     color:#fff;
   }
@@ -252,14 +249,6 @@
   <div id="fullscreen-trigger" title=""></div>
   <div id="screen">
     <div class="notch"></div>
-    <div class="statusbar">
-      <div class="time">9:41</div>
-      <div class="right-icons">
-        <svg viewBox="0 0 18 12"><path d="M1 9h2v2H1zM5 6h2v5H5zM9 3h2v8H9zM13 0h2v11h-2z" fill="currentColor"/></svg>
-        <svg viewBox="0 0 16 12"><path d="M8 2c2.5 0 4.7 1 6.3 2.6l-1.4 1.4C11.6 4.7 9.9 4 8 4s-3.6.7-4.9 2L1.7 4.6C3.3 3 5.5 2 8 2zm0 4c1.4 0 2.6.6 3.5 1.4L10 8.9c-.5-.5-1.2-.9-2-.9s-1.5.4-2 .9L4.5 7.4C5.4 6.6 6.6 6 8 6zm0 4a1.5 1.5 0 110 3 1.5 1.5 0 010-3z" fill="currentColor"/></svg>
-        <svg viewBox="0 0 25 12"><rect x="1" y="1" width="20" height="10" rx="2.5" stroke="currentColor" stroke-width="1" fill="none"/><rect x="2.5" y="2.5" width="16" height="7" rx="1.5" fill="currentColor"/><rect x="22" y="4" width="1.6" height="4" rx="0.8" fill="currentColor"/></svg>
-      </div>
-    </div>
 
     <div class="top-overlay">
       <div class="tab">フォロー中</div>
