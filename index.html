@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
 <title>TikTok mockup prop</title>
 <style>
   :root{
@@ -10,46 +10,45 @@
   }
   *{box-sizing:border-box; -webkit-tap-highlight-color:transparent; user-select:none;}
   html,body{
-    margin:0; padding:0; height:100%;
-    background:#3a3a3a;
-    display:flex; align-items:center; justify-content:center;
+    margin:0; padding:0; width:100%; height:100%;
+    background:#000;
     font-family:-apple-system, "Helvetica Neue", "Hiragino Sans", "Yu Gothic", sans-serif;
     overflow:hidden;
   }
 
-  /* ===== iPhone X frame ===== */
+  /* ===== fullscreen device canvas (fills the real screen edge-to-edge) ===== */
   #device{
-    position:relative;
-    width:375px; height:812px;
+    position:fixed; inset:0;
+    width:100%; height:100%;
     background:#000;
-    border-radius:55px;
-    padding:14px;
-    box-shadow:0 25px 60px rgba(0,0,0,.6);
   }
   #screen{
     position:relative;
     width:100%; height:100%;
     background:#000;
-    border-radius:40px;
     overflow:hidden;
   }
-  .notch{
-    position:absolute; top:0; left:50%; transform:translateX(-50%);
-    width:210px; height:30px;
-    background:#000;
-    border-radius:0 0 20px 20px;
-    z-index:900;
-  }
+  .notch{ display:none; } /* real device already has its own notch/cutout */
   .statusbar{
     position:absolute; top:0; left:0; right:0; height:44px;
+    padding-top:env(safe-area-inset-top, 0px);
     display:flex; align-items:flex-end; justify-content:space-between;
-    padding:0 28px 6px 28px;
+    padding-left:calc(28px + env(safe-area-inset-left, 0px));
+    padding-right:calc(28px + env(safe-area-inset-right, 0px));
+    padding-bottom:6px;
     z-index:800;
     color:#fff;
     font-size:15px; font-weight:600;
     pointer-events:none;
   }
   .statusbar .right-icons{display:flex; align-items:center; gap:5px;}
+
+  /* unobtrusive tap target: top-right corner, double-tap to enter/exit real fullscreen */
+  #fullscreen-trigger{
+    position:fixed; top:0; right:0;
+    width:70px; height:50px;
+    z-index:950;
+  }
 
   /* ===== feed ===== */
   .feed{
@@ -206,9 +205,11 @@
 
   /* bottom tab bar (TikTok-style, fixed) */
   .bottom-tabbar{
-    position:absolute; bottom:0; left:0; right:0; height:82px;
+    position:absolute; bottom:0; left:0; right:0;
+    height:calc(82px + env(safe-area-inset-bottom, 0px));
     display:flex; align-items:flex-start; justify-content:space-around;
     padding-top:8px;
+    padding-bottom:env(safe-area-inset-bottom, 0px);
     background:linear-gradient(to top, rgba(0,0,0,.6), transparent);
     z-index:700;
     pointer-events:none;
@@ -248,6 +249,7 @@
 <body>
 
 <div id="device">
+  <div id="fullscreen-trigger" title=""></div>
   <div id="screen">
     <div class="notch"></div>
     <div class="statusbar">
@@ -551,6 +553,27 @@
   tapZone.addEventListener('dblclick', ()=>{
     resetZoom();
     suppressClick = true;
+  });
+
+  // ===== fullscreen toggle (double-tap top-right corner) =====
+  // Hides the browser's own address bar / chrome where the Fullscreen API
+  // is supported (most Android browsers; limited on iOS Safari).
+  const fsTrigger = document.getElementById('fullscreen-trigger');
+  function toggleFullscreen(){
+    const el = document.documentElement;
+    if(!document.fullscreenElement){
+      if(el.requestFullscreen) el.requestFullscreen().catch(()=>{});
+      else if(el.webkitRequestFullscreen) el.webkitRequestFullscreen();
+    } else {
+      if(document.exitFullscreen) document.exitFullscreen().catch(()=>{});
+      else if(document.webkitExitFullscreen) document.webkitExitFullscreen();
+    }
+  }
+  let fsLastTap = 0;
+  fsTrigger.addEventListener('click', ()=>{
+    const now = Date.now();
+    if(now - fsLastTap < 350){ toggleFullscreen(); fsLastTap = 0; }
+    else { fsLastTap = now; }
   });
 
   // autoplay target clip only while it's the one in view
