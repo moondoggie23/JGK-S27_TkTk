@@ -40,14 +40,16 @@
   /* unobtrusive tap target: top-right corner, double-tap to enter/exit real fullscreen */
   #fullscreen-trigger{
     position:fixed; top:0; right:0;
-    width:70px; height:50px;
+    width:130px; height:90px;
     z-index:950;
+    touch-action:manipulation;
   }
   /* unobtrusive tap target: top-left corner, tap to open the hidden control panel */
   #panel-trigger{
     position:fixed; top:0; left:0;
-    width:70px; height:50px;
+    width:130px; height:90px;
     z-index:950;
+    touch-action:manipulation;
   }
 
   /* ===== hidden control panel ===== */
@@ -416,11 +418,11 @@
   <div id="panel">
     <h3>裏メニュー</h3>
     <div class="panel-toggle-row">
-      <label>狙いの動画をガイド画像にする</label>
-      <div class="panel-switch">
+      <label for="guide-toggle">狙いの動画をガイド画像にする</label>
+      <label class="panel-switch" for="guide-toggle">
         <input type="checkbox" id="guide-toggle">
         <div class="panel-slider"></div>
-      </div>
+      </label>
     </div>
     <div class="panel-note">OFF＝グリーンスクリーン／ON＝ガイド画像。ガイド画像はこのメニューを閉じてもピンチ操作でそのまま拡大・移動できます。</div>
     <div class="panel-close" id="panel-close">閉じる</div>
